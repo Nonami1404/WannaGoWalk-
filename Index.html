@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Погулять?</title>
+  <style>
+    body {
+      text-align: center;
+      margin-top: 50px;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #yes, #no {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin: 10px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 15px;
+      color: white;
+      border: none;
+      top: 150px;
+    }
+    #yes{
+        background: green;
+        left: 600px;
+    }
+    #no{
+        background: red;
+        left: 750px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Не хочешь ли ты пойти гулять?</h2>
+  <button id="yes">Да</button>
+  <button id="no">Нет</button>
+
+  <script>
+    "use strict";
+
+    let name = prompt('Напиши свое имя, чтобы я знал, кто ты!');
+    alert('Привет! Как дела?'); 
+    alert("Этот сайт сделан по приколу и для того чтобы спросить, не хочешь ли ты пойти гулять (ответ будет отправлен мне в Telegram)");
+    alert("Сейчас на сайте появится вопрос и 2 кнопки, выбери одну из них");
+
+    const TOKEN = '7963148627:AAHGkT746bxkUEnGH0UC5-rV0nd2tDpFKkg'; // замените на свой
+    const CHAT_ID = '1347186841'; // замените на свой
+
+    const yes = document.getElementById('yes');
+    const no = document.getElementById('no');
+
+    function moveButtonRandomly(button) {
+      const maxX = window.innerWidth - button.offsetWidth;
+      const maxY = window.innerHeight - button.offsetHeight;
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+      button.style.left = `${x}px`;
+      button.style.top = `${y}px`;
+    }
+
+    // убегает при наведении мышкой
+    no.addEventListener('mouseenter', () => {
+      moveButtonRandomly(no);
+    });
+
+    // убегает при клике (или тапе)
+    no.addEventListener('click', (e) => {
+      e.preventDefault(); // отменим стандартный клик
+      moveButtonRandomly(no);
+    });
+
+    // отправка сообщения при клике на "Yes"
+    yes.addEventListener('click', () => {
+      const message = `${name} согласен(на) пойти погулять!`;
+      fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Sent:', data);
+        alert('Ответ отправлен!');
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        alert('Не удалось отправить сообщение.');
+      });
+    });
+  </script>
+</body>
+</html>
